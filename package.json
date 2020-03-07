@@ -1,0 +1,17 @@
+{
+  "name": "hackit",
+  "version": "1.0.0",
+  "bin": {
+    "hackit": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "main": "index.js",
+  "author": "Igwaneza Bruce <knowbeeinc@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "description": "**hackit** is a tool made for hacking wifi passwords from windows machine",
+  "devDependencies": {},
+  "keywords": []
+}
