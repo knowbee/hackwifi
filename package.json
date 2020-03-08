@@ -10,7 +10,9 @@
   "main": "index.js",
   "author": "Igwaneza Bruce <knowbeeinc@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "ora": "^4.0.3"
+  },
   "description": "**hackit** is a tool made for hacking wifi passwords from windows machine",
   "devDependencies": {},
   "keywords": []
