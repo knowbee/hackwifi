@@ -1,10 +1,16 @@
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
+const spinner = require("ora")();
 const credentials = path.join() + "/credentials/";
 
-fs.hackit = function() {
+if (!fs.existsSync(credentials)) {
+  fs.mkdirSync(credentials);
+}
+
+fs.hackwifi = function() {
   return new Promise(function(resolve, reject) {
+    spinner.start("be patient");
     exec("netsh wlan show profiles > wlan.txt", (err, stdout, stderr) => {
       if (err) {
         if (err) reject(err);
@@ -67,12 +73,13 @@ function fetchPasswords() {
             }
           }
         });
+        spinner.succeed("done");
         console.log(hackedPasswords);
       });
   }, 2000);
 }
 
-fs.hackit()
+fs.hackwifi()
   .then(profiles => {
     profiles.forEach(profile => {
       exec(
