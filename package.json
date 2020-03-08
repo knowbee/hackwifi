@@ -1,6 +1,6 @@
 {
   "name": "hackwifi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "**hackwifi** is a tool made for hacking wifi passwords",
   "bin": {
     "hackwifi": "index.js"

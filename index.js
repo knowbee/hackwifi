@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 const path = require("path");
 const { exec } = require("child_process");
 const fs = require("fs");
@@ -116,7 +117,7 @@ function helper() {
     **hackwifi** is a tool made for hacking(revealing) wifi passwords
     `
     )
-    .version("1.0.0")
+    .version("1.0.1")
     .parse(process.argv);
   hackwifi.on("--help", function() {
     console.log("Examples:");
