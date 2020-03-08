@@ -12,7 +12,11 @@
   "author": "Igwaneza Bruce <knowbeeinc@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^3.0.0",
     "check-os": "^1.0.1",
+    "clear": "^0.1.0",
+    "commander": "^4.1.1",
+    "figlet": "^1.3.0",
     "ora": "^4.0.3"
   },
   "devDependencies": {},
