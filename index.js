@@ -1,88 +1,85 @@
-const {
-  readFileSync,
-  readdir,
-  unlink,
-  readdirSync,
-  existsSync
-} = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
+const fs = require("fs");
+const credentials = path.join() + "/credentials/";
 
-const credentials = path.join() + "/credentials";
-let passwords = [];
-
-keepCredentials = profiles => {
-  // deleting all files from credentials folder first
-  readdirSync(credentials, (err, files) => {
-    if (err) throw err;
-
-    for (const file of files) {
-      unlink(path.join(credentials, file), err => {
-        if (err) throw err;
-      });
-    }
+fs.hackit = function() {
+  return new Promise(function(resolve, reject) {
+    exec("netsh wlan show profiles > wlan.txt", (err, stdout, stderr) => {
+      if (err) {
+        if (err) reject(err);
+      } else {
+        const wlan = fs.readFileSync("wlan.txt");
+        const formatted = wlan
+          .toString()
+          .split("All User Profile     :")
+          .slice(1, -1);
+        resolve(formatted);
+      }
+    });
   });
-  for (const profile of profiles) {
-    exec(
-      `netsh wlan show profiles "${profile}" key=clear > ${credentials}/"${profile}"`
-    );
-  }
-  const exist = existsSync(credentials);
-  if (exist) {
-    const dirnames = readdirSync(credentials);
-    for (const filename of dirnames) {
-      const data = readFileSync(`${credentials}/${filename}`);
-      try {
-        if (!data.toString().includes("Open")) {
-          console.log(filename);
-          const name = data
-            .toString()
-            .split(" on interface WiFi")[0]
-            .split("Profile ")[1];
-          const password = data
-            .toString()
-            .split("Key Content")[1]
-            .split("Cost settings")[0]
-            .split(": ")[1]
-            .trim();
-          passwords.push({ name, password });
-        }
-      } catch (error) {
-        readdirSync(credentials, (err, files) => {
-          if (err) throw err;
+};
 
-          for (const file of files) {
-            unlink(path.join(credentials, file), err => {
-              if (err) throw err;
-            });
+fs.readdirAsync = function(dirname) {
+  return new Promise(function(resolve, reject) {
+    fs.readdir(dirname, function(err, filenames) {
+      if (err) reject(err);
+      else resolve(filenames);
+    });
+  });
+};
+fs.readFileAsync = function(filename, enc) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(filename, enc, function(err, data) {
+      if (err) reject(err);
+      else resolve(data);
+    });
+  });
+};
+
+function getFile(filename) {
+  return fs.readFileAsync(credentials + filename, "utf8");
+}
+
+function fetchPasswords() {
+  setTimeout(() => {
+    fs.readdirAsync(credentials)
+      .then(function(filenames) {
+        return Promise.all(filenames.map(getFile));
+      })
+      .then(function(files) {
+        const hackedPasswords = [];
+        files.forEach(function(file) {
+          if (!file.includes("Open") && file !== undefined) {
+            let name = file.split("SSID name              :")[1];
+            if (name !== undefined) {
+              name = name.split("Network type")[0];
+            }
+            const pass = file
+              .toString()
+              .split("Cost settings")[0]
+              .split("Key Content            :")[1];
+            if (pass !== undefined) {
+              hackedPasswords.push({
+                name: name.trim(),
+                password: pass.trim()
+              });
+            }
           }
         });
-      }
-    }
-    return passwords;
-  } else {
-    return "no passwords found!";
-  }
-};
+        console.log(hackedPasswords);
+      });
+  }, 2000);
+}
 
-getInterface = () => {
-  exec("netsh wlan show profiles > wlan.txt", (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(stdout);
+fs.hackit()
+  .then(profiles => {
+    profiles.forEach(profile => {
+      exec(
+        `netsh wlan show profiles "${profile.trim()}" key=clear > ${credentials}/"${profile.trim()}"`
+      );
+    });
+  })
+  .then(() => {
+    return fetchPasswords();
   });
-};
-
-const profiles = [];
-formatWlan = () => {
-  const wlan = readFileSync("wlan.txt");
-  const formatted = wlan.toString().split("All User Profile     :");
-  for (const w of formatted.slice(1, -1)) {
-    profiles.push(w.trim());
-  }
-  return keepCredentials(profiles);
-};
-
-console.log(formatWlan());
