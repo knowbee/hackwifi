@@ -3,6 +3,12 @@ const { exec } = require("child_process");
 const fs = require("fs");
 const spinner = require("ora")();
 const credentials = path.join() + "/credentials/";
+const ostype = require("check-os");
+
+if (!ostype.isWindows) {
+  console.log(`${ostype.getPlatform()} is not supported`);
+  process.exit(1);
+}
 
 if (!fs.existsSync(credentials)) {
   fs.mkdirSync(credentials);
