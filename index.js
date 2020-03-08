@@ -4,7 +4,17 @@ const fs = require("fs");
 const spinner = require("ora")();
 const credentials = path.join() + "/credentials/";
 const ostype = require("check-os");
+const clear = require("clear");
+const cli = require("commander");
+const chalk = require("chalk");
+const figlet = require("figlet");
 
+const hackwifi = new cli.Command();
+clear();
+helper();
+console.log(
+  chalk.magenta(figlet.textSync("hackwifi", { horizontalLayout: "full" }))
+);
 if (!ostype.isWindows) {
   console.log(`${ostype.getPlatform()} is not supported`);
   process.exit(1);
@@ -96,3 +106,21 @@ fs.hackwifi()
   .then(() => {
     return fetchPasswords();
   });
+
+function helper() {
+  console.log();
+  hackwifi
+    .name("hackwifi")
+    .description(
+      `
+    **hackwifi** is a tool made for hacking(revealing) wifi passwords
+    `
+    )
+    .version("1.0.0")
+    .parse(process.argv);
+  hackwifi.on("--help", function() {
+    console.log("Examples:");
+    console.log("  $ hackwifi");
+    console.log("  $ hackwifi --help");
+  });
+}

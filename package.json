@@ -19,6 +19,15 @@
     "figlet": "^1.3.0",
     "ora": "^4.0.3"
   },
+  "bugs": {
+    "url": "https://github.com/knowbee/hackwifi/issues"
+  },
+  "homepage": "https://github.com/knowbee/hackwifi#readme",
   "devDependencies": {},
-  "keywords": []
+  "keywords": [
+    "wifi",
+    "hack wifi",
+    "wifi passwords",
+    "network"
+  ]
 }
