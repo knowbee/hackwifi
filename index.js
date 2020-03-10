@@ -12,6 +12,7 @@ const figlet = require("figlet");
 
 const hackwifi = new cli.Command();
 clear();
+
 helper();
 console.log(
   chalk.magenta(figlet.textSync("hackwifi", { horizontalLayout: "full" }))
@@ -105,7 +106,7 @@ fs.hackwifi()
     });
   })
   .then(() => {
-    return fetchPasswords();
+    fetchPasswords();
   });
 
 function helper() {
@@ -125,3 +126,13 @@ function helper() {
     console.log("  $ hackwifi --help");
   });
 }
+// delete credentials after output
+setTimeout(() => {
+  exec("rmdir /Q /S credentials && del wlan.txt", (err, stderr, stdout) => {
+    if (stdout) {
+      spinner.succeed("done");
+    } else {
+      process.exit(1);
+    }
+  });
+}, 3000);
