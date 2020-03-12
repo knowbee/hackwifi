@@ -9,13 +9,13 @@ const clear = require("clear");
 const cli = require("commander");
 const chalk = require("chalk");
 const figlet = require("figlet");
-
+const Table = require("console.table");
 const hackwifi = new cli.Command();
 clear();
 
 helper();
 console.log(
-  chalk.magenta(figlet.textSync("hackwifi", { horizontalLayout: "full" }))
+  chalk.magentaBright(figlet.textSync("hackwifi", { horizontalLayout: "full" }))
 );
 if (!ostype.isWindows) {
   console.log(`${ostype.getPlatform()} is not supported`);
@@ -92,7 +92,7 @@ function fetchPasswords() {
           }
         });
         spinner.succeed("done");
-        console.log(hackedPasswords);
+        console.log(chalk.magenta(Table.getTable(hackedPasswords)));
       });
   }, 2000);
 }
