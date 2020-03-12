@@ -118,7 +118,7 @@ function helper() {
     **hackwifi** is a tool made for hacking(revealing) wifi passwords
     `
     )
-    .version("1.0.2")
+    .version("1.0.3")
     .parse(process.argv);
   hackwifi.on("--help", function() {
     console.log("Examples:");
