@@ -128,11 +128,16 @@ function helper() {
 }
 // delete credentials after output
 setTimeout(() => {
-  exec("rmdir /Q /S credentials && del wlan.txt", (err, stderr, stdout) => {
-    if (stdout) {
-      spinner.succeed("done");
-    } else {
-      process.exit(1);
-    }
-  });
-}, 3000);
+  if (
+    fs.exists(credentials, () => {
+      exec("rmdir /Q /S credentials && del wlan.txt", (err, stderr, stdout) => {
+        if (stdout) {
+          spinner.succeed("done");
+        } else {
+          process.exit(1);
+        }
+      });
+    })
+  ) {
+  }
+}, 5000);
