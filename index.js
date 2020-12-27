@@ -43,7 +43,7 @@ if (!ostype.isWindows) {
     });
 }
 
-if (!fs.existsSync(credentials)) {
+if (!fs.existsSync(credentials) && ostype.isWindows) {
   fs.mkdirSync(credentials);
 }
 
@@ -149,7 +149,6 @@ function helper() {
     console.log("  $ hackwifi --help");
   });
 }
-// delete credentials after output
 setTimeout(() => {
   if (
     fs.exists(credentials, () => {
