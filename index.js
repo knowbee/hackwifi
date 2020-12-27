@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 const path = require("path");
 const { exec } = require("child_process");
+const shellExec = require("shell-exec");
 const fs = require("fs");
 const spinner = require("ora")();
 const credentials = path.join() + "/credentials/";
@@ -17,44 +18,66 @@ helper();
 console.log(
   chalk.magentaBright(figlet.textSync("hackwifi", { horizontalLayout: "full" }))
 );
+
 if (!ostype.isWindows) {
-  console.log(`${ostype.getPlatform()} is not supported`);
-  process.exit(1);
+  shellExec("sudo grep psk= /etc/NetworkManager/system-connections/*")
+    .then((res) => {
+      const all_profiles = res.stdout.split("\n");
+      const hackedPasswords = [];
+
+      let result;
+      for (let profile of all_profiles) {
+        result = profile.replace("/etc/NetworkManager/system-connections/", "");
+        const name = result.split(":psk=")[0];
+        const password = result.split(":psk=")[1];
+        hackedPasswords.push({
+          name,
+          password,
+        });
+      }
+      console.log(chalk.green(Table.getTable(hackedPasswords)));
+      process.exit(0);
+    })
+    .catch((err) => {
+      process.exit(1);
+    });
 }
 
 if (!fs.existsSync(credentials)) {
   fs.mkdirSync(credentials);
 }
 
-fs.hackwifi = function() {
-  return new Promise(function(resolve, reject) {
-    spinner.start("be patient");
-    exec("netsh wlan show profiles > wlan.txt", (err, stdout, stderr) => {
-      if (err) {
-        if (err) reject(err);
-      } else {
-        const wlan = fs.readFileSync("wlan.txt");
-        const formatted = wlan
-          .toString()
-          .split("All User Profile     :")
-          .slice(1, -1);
-        resolve(formatted);
-      }
-    });
+fs.hackwifi = function () {
+  return new Promise(function (resolve, reject) {
+    if (ostype.isWindows) {
+      spinner.start("be patient");
+      exec("netsh wlan show profiles > wlan.txt", (err, stdout, stderr) => {
+        if (err) {
+          if (err) reject(err);
+        } else {
+          const wlan = fs.readFileSync("wlan.txt");
+          const formatted = wlan
+            .toString()
+            .split("All User Profile     :")
+            .slice(1, -1);
+          resolve(formatted);
+        }
+      });
+    }
   });
 };
 
-fs.readdirAsync = function(dirname) {
-  return new Promise(function(resolve, reject) {
-    fs.readdir(dirname, function(err, filenames) {
+fs.readdirAsync = function (dirname) {
+  return new Promise(function (resolve, reject) {
+    fs.readdir(dirname, function (err, filenames) {
       if (err) reject(err);
       else resolve(filenames);
     });
   });
 };
-fs.readFileAsync = function(filename, enc) {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(filename, enc, function(err, data) {
+fs.readFileAsync = function (filename, enc) {
+  return new Promise(function (resolve, reject) {
+    fs.readFile(filename, enc, function (err, data) {
       if (err) reject(err);
       else resolve(data);
     });
@@ -68,12 +91,12 @@ function getFile(filename) {
 function fetchPasswords() {
   setTimeout(() => {
     fs.readdirAsync(credentials)
-      .then(function(filenames) {
+      .then(function (filenames) {
         return Promise.all(filenames.map(getFile));
       })
-      .then(function(files) {
+      .then(function (files) {
         const hackedPasswords = [];
-        files.forEach(function(file) {
+        files.forEach(function (file) {
           if (!file.includes("Open") && file !== undefined) {
             let name = file.split("SSID name              :")[1];
             if (name !== undefined) {
@@ -86,7 +109,7 @@ function fetchPasswords() {
             if (pass !== undefined) {
               hackedPasswords.push({
                 name: name.trim(),
-                password: pass.trim()
+                password: pass.trim(),
               });
             }
           }
@@ -98,8 +121,8 @@ function fetchPasswords() {
 }
 
 fs.hackwifi()
-  .then(profiles => {
-    profiles.forEach(profile => {
+  .then((profiles) => {
+    profiles.forEach((profile) => {
       exec(
         `netsh wlan show profiles "${profile.trim()}" key=clear > ${credentials}/"${profile.trim()}"`
       );
@@ -120,7 +143,7 @@ function helper() {
     )
     .version("1.0.4")
     .parse(process.argv);
-  hackwifi.on("--help", function() {
+  hackwifi.on("--help", function () {
     console.log("Examples:");
     console.log("  $ hackwifi");
     console.log("  $ hackwifi --help");

@@ -1,6 +1,6 @@
 {
   "name": "hackwifi",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "**hackwifi** is a tool made for hacking wifi passwords",
   "bin": {
     "hackwifi": "index.js"
@@ -15,10 +15,11 @@
     "chalk": "^3.0.0",
     "check-os": "^1.0.1",
     "clear": "^0.1.0",
-    "commander": "^4.1.1",
+    "commander": "^6.2.1",
     "console.table": "^0.10.0",
-    "figlet": "^1.3.0",
-    "ora": "^4.0.3"
+    "figlet": "^1.5.0",
+    "ora": "^5.1.0",
+    "shell-exec": "^1.0.2"
   },
   "bugs": {
     "url": "https://github.com/knowbee/hackwifi/issues"
